@@ -47,7 +47,7 @@ export function BookingManager({ bookings }: BookingManagerProps) {
     ? bookings 
     : bookings.filter(b => b.status === filter);
 
-  const handleStatusUpdate = async (id: string, status: string) => {
+  const handleStatusUpdate = async (id: string, status: any) => {
     await updateBookingStatus(id, status);
     router.refresh();
   };

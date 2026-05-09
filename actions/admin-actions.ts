@@ -1,6 +1,8 @@
 'use server'
 
 import prisma from '@/lib/db'
+import { revalidatePath } from 'next/cache'
+import { BookingStatus } from '@prisma/client'
 
 export async function getDashboardStats() {
   const [
@@ -47,7 +49,7 @@ export async function getDashboardStats() {
     where: { status: 'COMPLETED' },
     include: { service: { select: { price: true } } }
   })
-  const totalRevenue = completedBookingsList.reduce((acc, b) => acc + b.service.price, 0)
+  const totalRevenue = completedBookingsList.reduce((acc: number, b) => acc + b.service.price, 0)
 
   return {
     totalBookings,
@@ -75,9 +77,10 @@ export async function getBookings() {
   })
 }
 
-export async function updateBookingStatus(id: string, status: any) {
+export async function updateBookingStatus(id: string, status: BookingStatus) {
   await prisma.booking.update({
     where: { id },
     data: { status }
   })
+  revalidatePath('/admin/bookings')
 }
