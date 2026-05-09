@@ -1,0 +1,208 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+model Service {
+  id               String    @id @default(cuid())
+  slug             String    @unique
+  title            String
+  shortDescription String
+  fullDescription  String
+  price            Float
+  duration         String
+  image            String
+  features         String[]
+  benefits         String[]
+  isPopular        Boolean   @default(false)
+  isPublished      Boolean   @default(true)
+  order            Int       @default(0)
+  metaTitle        String
+  metaDescription  String
+  focusKeyword     String?   // Primary SEO keyword
+  schemaMarkup     String?   // JSON-LD schema string
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  bookings         Booking[]
+
+  @@index([isPublished])
+  @@index([order])
+}
+
+model Booking {
+  id         String        @id @default(cuid())
+  serviceId  String
+  service    Service       @relation(fields: [serviceId], references: [id])
+  customerName String
+  customerEmail String
+  customerPhone String
+  carModel     String
+  location     String
+  scheduledAt  DateTime
+  status       BookingStatus @default(PENDING)
+  notes        String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Review {
+  id          String   @id @default(cuid())
+  author      String
+  role        String
+  location    String?
+  content     String
+  rating      Int
+  avatar      String?
+  isVerified  Boolean  @default(true)
+  isFeatured  Boolean  @default(false)
+  isPublished Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isPublished])
+  @@index([order])
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String
+  posts     Post[]
+}
+
+model Tag {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String
+  posts     Post[]
+}
+
+model Post {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  title           String
+  content         String
+  excerpt         String
+  coverImage      String?
+  authorName      String   @default("Admin")
+  isPublished     Boolean  @default(false)
+  readingTime     Int      @default(5)
+  metaTitle       String?
+  metaDescription String?
+  focusKeyword    String?
+  schemaMarkup    String?  // JSON-LD schema string
+  categoryId      String?
+  category        Category? @relation(fields: [categoryId], references: [id])
+  tags            Tag[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([isPublished])
+  @@index([categoryId])
+  @@index([createdAt])
+}
+
+model FaqCategory {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  order     Int      @default(0)
+  faqs      Faq[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Faq {
+  id          String       @id @default(cuid())
+  question    String
+  answer      String
+  order       Int          @default(0)
+  isPublished Boolean      @default(true)
+  categoryId  String?
+  category    FaqCategory? @relation(fields: [categoryId], references: [id])
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([isPublished])
+  @@index([categoryId])
+  @@index([order])
+}
+
+model User {
+  id       String  @id @default(cuid())
+  email    String  @unique
+  name     String?
+  password String
+  role     String  @default("USER")
+}
+
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String   // stored as JSON string
+  updatedAt DateTime @updatedAt
+}
+
+model PageSeo {
+  id               String   @id @default(cuid())
+  pageKey          String   @unique  // e.g. "page:home", "page:services"
+  pageLabel        String            // Human-readable label for admin UI
+  metaTitle        String?
+  metaDescription  String?
+  canonicalUrl     String?
+  focusKeyword     String?
+  ogTitle          String?
+  ogDescription    String?
+  ogImage          String?
+  ogType           String?  @default("website")
+  twitterCard      String?  @default("summary_large_image")
+  twitterTitle     String?
+  twitterDescription String?
+  twitterImage     String?
+  noIndex          Boolean  @default(false)
+  noFollow         Boolean  @default(false)
+  schemaMarkup     String?  // JSON-LD as a JSON string
+  updatedAt        DateTime @updatedAt
+  createdAt        DateTime @default(now())
+}
+
+model Area {
+  id               String    @id @default(cuid())
+  slug             String    @unique
+  title            String
+  shortDescription String
+  fullDescription  String
+  image            String?
+  isPublished      Boolean   @default(true)
+  order            Int       @default(0)
+  metaTitle        String?
+  metaDescription  String?
+  focusKeyword     String?
+  schemaMarkup     String?   // JSON-LD schema string
+  // Map support
+  mapEmbedUrl      String?   // Google Maps embed URL
+  latitude         String?
+  longitude        String?
+  // Service Coverage
+  coveredAreas     String[]  // Sub-areas/neighborhoods covered
+  // Hero section
+  heroTagline      String?   // e.g. "Dubai's #1 Mobile Car Wash"
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@index([isPublished])
+  @@index([order])
+}
