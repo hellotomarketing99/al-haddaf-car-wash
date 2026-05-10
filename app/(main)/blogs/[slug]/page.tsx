@@ -8,19 +8,32 @@ import { generateEntityMetadata } from '@/lib/seo';
 import { SanitizeHTML } from '@/components/shared/sanitize-html';
 import { SchemaMarkup } from '@/components/shared/schema-markup';
 
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const post = await prisma.post.findUnique({ where: { slug } });
-  if (!post) return { title: 'Post Not Found' };
-  return generateEntityMetadata(post, 'post');
+  try {
+    const { slug } = await params;
+    const post = await prisma.post.findUnique({ where: { slug } });
+    if (!post) return { title: 'Post Not Found' };
+    return generateEntityMetadata(post, 'post');
+  } catch (error) {
+    console.error("Metadata DB error:", error);
+    return { title: 'Post Not Found' };
+  }
 }
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = await prisma.post.findUnique({ 
-    where: { slug },
-    include: { category: true, tags: true }
-  });
+  
+  let post = null;
+  try {
+    post = await prisma.post.findUnique({ 
+      where: { slug },
+      include: { category: true, tags: true }
+    });
+  } catch (error) {
+    console.error("Database error in BlogPostPage:", error);
+  }
 
   if (!post || !post.isPublished) {
     notFound();

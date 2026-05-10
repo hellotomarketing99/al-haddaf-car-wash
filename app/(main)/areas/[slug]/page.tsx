@@ -9,27 +9,44 @@ import { generateEntityMetadata } from '@/lib/seo';
 import { SanitizeHTML } from '@/components/shared/sanitize-html';
 import { SchemaMarkup } from '@/components/shared/schema-markup';
 
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const area = await prisma.area.findUnique({ where: { slug } });
-  if (!area) return { title: 'Area Not Found' };
-  return generateEntityMetadata(area, 'area');
+  try {
+    const { slug } = await params;
+    const area = await prisma.area.findUnique({ where: { slug } });
+    if (!area) return { title: 'Area Not Found' };
+    return generateEntityMetadata(area, 'area');
+  } catch (error) {
+    console.error("Metadata DB error:", error);
+    return { title: 'Area Not Found' };
+  }
 }
 
 export default async function AreaPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const area = await prisma.area.findUnique({ where: { slug } });
+  
+  let area = null;
+  let services: any[] = [];
+  
+  try {
+    area = await prisma.area.findUnique({ where: { slug } });
+
+    if (area && area.isPublished) {
+      // Also fetch available services for the coverage section
+      services = await prisma.service.findMany({
+        where: { isPublished: true },
+        orderBy: { order: 'asc' },
+        select: { title: true, slug: true, shortDescription: true, price: true, duration: true },
+      });
+    }
+  } catch (error) {
+    console.error("Database error in AreaPage:", error);
+  }
 
   if (!area || !area.isPublished) {
     notFound();
   }
-
-  // Also fetch available services for the coverage section
-  const services = await prisma.service.findMany({
-    where: { isPublished: true },
-    orderBy: { order: 'asc' },
-    select: { title: true, slug: true, shortDescription: true, price: true, duration: true },
-  });
 
   return (
     <div className="min-h-screen">

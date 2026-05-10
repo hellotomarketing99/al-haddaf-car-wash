@@ -8,16 +8,29 @@ import { generateEntityMetadata } from '@/lib/seo';
 import { SanitizeHTML } from '@/components/shared/sanitize-html';
 import { SchemaMarkup } from '@/components/shared/schema-markup';
 
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const service = await prisma.service.findUnique({ where: { slug } });
-  if (!service) return { title: 'Service Not Found' };
-  return generateEntityMetadata(service, 'service');
+  try {
+    const { slug } = await params;
+    const service = await prisma.service.findUnique({ where: { slug } });
+    if (!service) return { title: 'Service Not Found' };
+    return generateEntityMetadata(service, 'service');
+  } catch (error) {
+    console.error("Metadata DB error:", error);
+    return { title: 'Service Not Found' };
+  }
 }
 
 export default async function ServicePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const service = await prisma.service.findUnique({ where: { slug } });
+  
+  let service = null;
+  try {
+    service = await prisma.service.findUnique({ where: { slug } });
+  } catch (error) {
+    console.error("Database error in ServicePage:", error);
+  }
 
   if (!service || !service.isPublished) {
     notFound();
