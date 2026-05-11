@@ -3,10 +3,16 @@ import { Instagram, Facebook, Twitter, Linkedin, Youtube, Phone, Mail, MapPin, A
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import { getSiteSettings } from '@/actions/settings-actions'
+import { SITE_SETTINGS_DEFAULTS } from '@/data/site-settings-defaults'
 import { siteConfig } from '@/data/site-config'
 
 export async function Footer() {
-  const settings = await getSiteSettings()
+  let settings = SITE_SETTINGS_DEFAULTS
+  try {
+    settings = await getSiteSettings()
+  } catch {
+    // fall back to defaults
+  }
   const { general, social, footer, branding } = settings
 
   const socialLinks = [
@@ -25,12 +31,14 @@ export async function Footer() {
           <div className="space-y-6">
             <Link href="/" className="flex items-center gap-2">
               <div className="relative h-12 w-48 brightness-0 invert">
-                <Image
-                  src={branding.logoUrl}
-                  alt={general.companyName}
-                  fill
-                  className="object-contain"
-                />
+                {branding.logoUrl && (
+                  <Image
+                    src={branding.logoUrl}
+                    alt={general.companyName}
+                    fill
+                    className="object-contain"
+                  />
+                )}
               </div>
             </Link>
             <p className="text-white/70 leading-relaxed">

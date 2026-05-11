@@ -17,7 +17,12 @@ export const viewport: Viewport = {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSiteSettings()
+  let settings = SITE_SETTINGS_DEFAULTS
+  try {
+    settings = await getSiteSettings()
+  } catch {
+    // fall back to defaults
+  }
   return {
     title: {
       default: settings.seo.defaultTitle,
