@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import {
@@ -77,7 +77,6 @@ function SortableRow({ faq, onTogglePublish, onDelete }: any) {
 export function SortableFaqTable({ initialFaqs }: FaqTableProps) {
   const [faqs, setFaqs] = useState(initialFaqs);
   const [isMounted, setIsMounted] = useState(false);
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setIsMounted(true); }, []);
 
   const sensors = useSensors(

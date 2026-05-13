@@ -1,6 +1,8 @@
 import { LoginForm } from "@/components/admin/login-form"
 import Image from "next/image"
 
+export const dynamic = 'force-dynamic'
+
 export default function LoginPage() {
   return (
     <div className="flex min-h-screen">
