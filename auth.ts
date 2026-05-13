@@ -4,9 +4,6 @@ import { authConfig } from "./auth.config"
 import prisma from "@/lib/db"
 import bcrypt from "bcryptjs"
 
-if (!process.env.AUTH_SECRET) {
-  console.warn("⚠️ Warning: Missing AUTH_SECRET environment variable. Authentication may fail in production.");
-}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,

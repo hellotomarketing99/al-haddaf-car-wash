@@ -2,6 +2,8 @@ import { MetadataRoute } from 'next';
 import prisma from '@/lib/db';
 import { getSiteSettings } from '@/actions/settings-actions';
 
+export const dynamic = 'force-dynamic';
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const settings = await getSiteSettings();
   const baseUrl = settings.seo.canonicalUrl || 'https://alhaddafcarwash.ae';
