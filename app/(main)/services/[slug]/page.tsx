@@ -331,7 +331,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
             <span className="inline-block rounded-full bg-white/10 px-4 py-1 text-sm font-bold mb-3">
               Simple Process
             </span>
-            <h2 className="text-3xl font-black uppercase tracking-tight sm:text-4xl">
+            <h2 className="text-3xl font-black uppercase tracking-tight sm:text-4xl text-white">
               How It Works
             </h2>
             <p className="mt-3 text-white/70 max-w-xl mx-auto">
@@ -348,7 +348,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
                 <div className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center">
                   <Icon size={20} className="text-white" />
                 </div>
-                <h3 className="text-lg font-bold">{title}</h3>
+                <h3 className="text-lg font-bold text-white">{title}</h3>
                 <p className="text-white/70 text-sm leading-relaxed">{description}</p>
               </div>
             ))}
@@ -414,7 +414,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
               <Badge className="bg-white/20 text-white border-white/30">
                 Book Today
               </Badge>
-              <h2 className="text-3xl font-black sm:text-4xl md:text-5xl">
+              <h2 className="text-3xl font-black sm:text-4xl md:text-5xl text-white">
                 Ready to Book {service.title}?
               </h2>
               <p className="text-white/80 text-lg">

@@ -134,7 +134,7 @@ export default async function Home() {
                   <span className="inline-flex items-center gap-2 rounded-full bg-white/20 px-4 py-1.5 text-sm font-bold mb-4">
                     ✨ Best Value Bundle
                   </span>
-                  <h3 className="text-3xl md:text-4xl font-black mb-2">{bundle.title}</h3>
+                  <h3 className="text-3xl md:text-4xl font-black mb-2 text-white">{bundle.title}</h3>
                   <p className="text-white/80 mb-4">{bundle.shortDescription}</p>
                   <div className="flex items-center gap-3">
                     {bundle.compareAtPrice && (
