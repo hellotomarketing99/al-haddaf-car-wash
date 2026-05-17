@@ -6,6 +6,7 @@ import { ServiceAreas } from '@/components/sections/service-areas'
 import { CustomerReviews } from '@/components/sections/customer-reviews'
 import { FAQAccordion } from '@/components/sections/faq-accordion'
 import { FinalCTA } from '@/components/sections/final-cta'
+import { BeforeAfterGallery } from '@/components/sections/before-after-gallery'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { formatPrice } from '@/lib/utils'
@@ -22,8 +23,8 @@ export const generateMetadata = () => generatePageMetadata('page:home');
 export default async function Home() {
   const [settings, dbServices, dbFaqs, dbReviews, pageSeo] = await Promise.all([
     getHomepageSettings(),
-    prisma.service.findMany({ 
-      where: { isPublished: true }, 
+    prisma.service.findMany({
+      where: { isPublished: true },
       orderBy: { order: 'asc' },
       select: {
         id: true,
@@ -31,8 +32,10 @@ export default async function Home() {
         slug: true,
         shortDescription: true,
         price: true,
+        compareAtPrice: true,
         duration: true,
         isPopular: true,
+        isBundle: true,
         features: true,
       }
     }),
@@ -74,13 +77,13 @@ export default async function Home() {
             <Badge variant="secondary" className="mb-4 px-4 py-1">Premium Care</Badge>
             <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">Our Detailing Services</h2>
             <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-              Experience the finest mobile detailing services in Dubai, delivered with precision 
+              Experience the finest mobile detailing services in Dubai, delivered with precision
               right to your doorstep.
             </p>
           </div>
 
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {dbServices.map((service) => (
+            {dbServices.filter((s) => !s.isBundle).map((service) => (
               <Card key={service.id} className="group flex flex-col">
                 <CardHeader>
                   <div className="flex items-center justify-between">
@@ -106,7 +109,11 @@ export default async function Home() {
                   <div className="flex w-full items-end justify-between">
                     <div>
                       <p className="text-xs uppercase tracking-wider text-muted-foreground">Investment</p>
-                      <p className="text-3xl font-black text-primary">{formatPrice(service.price)}</p>
+                      {service.price === 0 ? (
+                        <p className="text-3xl font-black text-primary">Contact Us</p>
+                      ) : (
+                        <p className="text-3xl font-black text-primary">{formatPrice(service.price)}</p>
+                      )}
                     </div>
                   </div>
                   <Link href={`/services/${service.slug}`} className="w-full">
@@ -118,25 +125,99 @@ export default async function Home() {
               </Card>
             ))}
           </div>
+
+          {/* Bundle Highlight */}
+          {dbServices.filter((s) => s.isBundle).map((bundle) => (
+            <div key={bundle.id} className="mt-12 rounded-3xl bg-primary p-8 md:p-12 text-white relative overflow-hidden">
+              <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+                <div>
+                  <span className="inline-flex items-center gap-2 rounded-full bg-white/20 px-4 py-1.5 text-sm font-bold mb-4">
+                    ✨ Best Value Bundle
+                  </span>
+                  <h3 className="text-3xl md:text-4xl font-black mb-2">{bundle.title}</h3>
+                  <p className="text-white/80 mb-4">{bundle.shortDescription}</p>
+                  <div className="flex items-center gap-3">
+                    {bundle.compareAtPrice && (
+                      <span className="text-white/50 line-through text-xl">AED {bundle.compareAtPrice}</span>
+                    )}
+                    <span className="text-4xl font-black">AED {bundle.price}</span>
+                    {bundle.compareAtPrice && (
+                      <span className="rounded-full bg-green-500 px-3 py-1 text-sm font-bold">
+                        Save AED {bundle.compareAtPrice - bundle.price}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-3 shrink-0">
+                  <Link href={`/services/${bundle.slug}`}>
+                    <Button size="lg" variant="outline" className="w-full border-white text-white hover:bg-white hover:text-primary font-bold px-8">
+                      Learn More
+                    </Button>
+                  </Link>
+                  <Link href="/book">
+                    <Button size="lg" variant="secondary" className="w-full font-bold px-8">
+                      Grab Bundle Deal →
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+              <div className="absolute top-0 right-0 -translate-y-1/3 translate-x-1/3 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
+              <div className="absolute bottom-0 left-0 translate-y-1/3 -translate-x-1/3 w-64 h-64 bg-white/5 rounded-full blur-3xl" />
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* 4. Why Choose Us */}
+      {/* 4. Before / After Gallery */}
+      <BeforeAfterGallery />
+
+      {/* 5. Why Choose Us */}
       <WhyChooseUs data={settings.whyChooseUs} />
 
-      {/* 5. How It Works */}
+      {/* 6. How It Works */}
       <HowItWorks data={settings.howItWorks} />
 
-      {/* 6. Service Areas */}
+      {/* CTA Strip — post How It Works */}
+      <div className="bg-secondary py-7">
+        <div className="container-premium flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+          <div>
+            <p className="font-black text-white text-xl">Your clean car is one booking away.</p>
+            <p className="text-white/80 text-sm mt-0.5">Same-day slots available · We come to you · No hidden fees</p>
+          </div>
+          <Link href="/book" className="shrink-0">
+            <Button size="lg" className="bg-white text-secondary hover:bg-white/90 font-black px-8 shadow-xl">
+              Book My Wash Now →
+            </Button>
+          </Link>
+        </div>
+      </div>
+
+      {/* 7. Service Areas */}
       <ServiceAreas />
 
-      {/* 7. Customer Reviews */}
+      {/* 8. Customer Reviews */}
       <CustomerReviews dbReviews={dbReviews as any} />
 
-      {/* 8. FAQ Accordion */}
+      {/* CTA Strip — post Reviews */}
+      {dbReviews.length > 0 && (
+        <div className="bg-primary py-7">
+          <div className="container-premium flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+            <p className="font-black text-white text-xl">
+              Join 500+ happy customers across Dubai.
+            </p>
+            <Link href="/book" className="shrink-0">
+              <Button size="lg" variant="secondary" className="font-black px-8 shadow-xl">
+                Get My Car Washed →
+              </Button>
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* 9. FAQ Accordion */}
       <FAQAccordion dbFaqs={dbFaqs as any} />
 
-      {/* 9. Final CTA */}
+      {/* 10. Final CTA */}
       <FinalCTA data={settings.finalCta} />
     </div>
   )

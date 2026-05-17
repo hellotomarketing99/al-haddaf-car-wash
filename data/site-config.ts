@@ -20,7 +20,7 @@ export const siteConfig = {
     { title: 'Areas', href: '/areas/dubai-marina' },
     { title: 'Pricing', href: '/book' },
     { title: 'About', href: '#about' },
-    { title: 'Contact', href: '#contact' },
+    { title: 'Contact', href: '/contact' },
   ],
   serviceAreas: [
     'Dubai Marina',

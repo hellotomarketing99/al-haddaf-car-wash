@@ -17,6 +17,8 @@ export type Service = {
   benefits: string[]
   faqs?: { question: string; answer: string }[]
   isPopular?: boolean
+  compareAtPrice?: number | null
+  isBundle?: boolean
   metaTitle: string
   metaDescription: string
 }

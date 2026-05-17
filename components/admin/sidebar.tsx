@@ -1,16 +1,17 @@
-import { 
-  LayoutDashboard, 
-  Car, 
-  MapPin, 
-  MessageSquare, 
-  FileText, 
-  CalendarCheck, 
-  Settings, 
+import {
+  LayoutDashboard,
+  Car,
+  MapPin,
+  MessageSquare,
+  FileText,
+  CalendarCheck,
+  Settings,
   HelpCircle,
   LogOut,
   ChevronRight,
   Home,
-  Search
+  Search,
+  Mail,
 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -20,6 +21,7 @@ const sidebarLinks = [
   { title: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { title: 'Homepage CMS', href: '/admin/homepage', icon: Home },
   { title: 'Bookings', href: '/admin/bookings', icon: CalendarCheck },
+  { title: 'Contacts', href: '/admin/contacts', icon: Mail },
   { title: 'Services', href: '/admin/services', icon: Car },
   { title: 'Areas', href: '/admin/areas', icon: MapPin },
   { title: 'Reviews', href: '/admin/reviews', icon: MessageSquare },

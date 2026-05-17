@@ -102,7 +102,7 @@ export function Navbar({
           <Link href="/book" className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">Pricing</Link>
           <Link href="/blogs" className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">Blog</Link>
           <Link href="/#about" className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">About</Link>
-          <Link href="/#contact" className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">Contact</Link>
+          <Link href="/contact" className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">Contact</Link>
         </nav>
 
         {/* Desktop Actions */}
@@ -174,7 +174,7 @@ export function Navbar({
               <Link href="/book" onClick={() => setIsOpen(false)} className="text-xl font-bold text-foreground hover:text-primary">Pricing</Link>
               <Link href="/blogs" onClick={() => setIsOpen(false)} className="text-xl font-bold text-foreground hover:text-primary">Blog</Link>
               <Link href="/#about" onClick={() => setIsOpen(false)} className="text-xl font-bold text-foreground hover:text-primary">About</Link>
-              <Link href="/#contact" onClick={() => setIsOpen(false)} className="text-xl font-bold text-foreground hover:text-primary">Contact</Link>
+              <Link href="/contact" onClick={() => setIsOpen(false)} className="text-xl font-bold text-foreground hover:text-primary">Contact</Link>
 
               <hr className="border-border my-2" />
               <div className="flex flex-col gap-4">

@@ -11,7 +11,7 @@ const prisma = new PrismaClient({ adapter })
 
 async function main() {
   console.log('Seeding data...')
-  
+
   // Create Admin User
   const adminEmail = process.env.ADMIN_EMAIL || 'admin@alhaddaf.ae'
   const adminPassword = process.env.ADMIN_PASSWORD || 'Admin@Alhaddaf2030'
@@ -29,12 +29,16 @@ async function main() {
   })
   console.log('Admin user created/verified.')
 
-  // Seed Services
-  for (const service of services) {
-    await prisma.service.upsert({
-      where: { slug: service.slug },
-      update: {},
-      create: {
+  // Clear old services (and their bookings) before re-seeding
+  await prisma.booking.deleteMany({})
+  await prisma.service.deleteMany({})
+  console.log('Old services cleared.')
+
+  // Seed new services
+  for (let i = 0; i < services.length; i++) {
+    const service = services[i]
+    await prisma.service.create({
+      data: {
         slug: service.slug,
         title: service.title,
         shortDescription: service.shortDescription,
@@ -44,11 +48,15 @@ async function main() {
         image: service.image,
         features: service.features,
         benefits: service.benefits,
-        isPopular: service.isPopular || false,
+        isPopular: service.isPopular ?? false,
+        compareAtPrice: service.compareAtPrice ?? null,
+        isBundle: service.isBundle ?? false,
+        order: i,
         metaTitle: service.metaTitle,
         metaDescription: service.metaDescription,
       },
     })
+    console.log(`  Created: ${service.title}`)
   }
 
   console.log('Seed completed successfully.')

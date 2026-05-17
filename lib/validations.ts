@@ -15,6 +15,17 @@ export const bookingSchema = z.object({
 
 export type BookingInput = z.infer<typeof bookingSchema>
 
+export const contactSchema = z.object({
+  name: z.string().min(2, 'Name must be at least 2 characters'),
+  email: z.string().email('Invalid email address'),
+  phone: z.string().min(9, 'Enter a valid phone number'),
+  subject: z.string().min(1, 'Please select a subject'),
+  message: z.string().min(10, 'Message must be at least 10 characters'),
+  honeypot: z.string().max(0, { message: 'Spam detected' }).optional(),
+})
+
+export type ContactInput = z.infer<typeof contactSchema>
+
 export const reviewSchema = z.object({
   author: z.string().min(2, 'Name must be at least 2 characters'),
   role: z.string().min(2, 'Car model must be at least 2 characters'),

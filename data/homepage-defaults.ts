@@ -2,9 +2,11 @@
 // This is a plain data file — NOT a server action file
 export const HOMEPAGE_DEFAULTS = {
   hero: {
-    tagline: "Dubai's #1 Mobile Car Wash",
-    heading: "We Come to You",
-    subheading: "Premium car wash & detailing at your doorstep. Same-day luxury service across Dubai.",
+    tagline: "#1 Mobile Car Wash in Dubai – Trusted by Over 1,200 Car Owners",
+    heading: "Every Wash is a",
+    headingHighlight: "Masterpiece.",
+    headingLine2: "Delivered to Your Doorstep.",
+    subheading: "Skip the heat and the queues. We bring Dubai's #1 mobile detailing service to your home or office.",
     primaryButtonText: "Book Your Wash",
     primaryButtonLink: "/book",
     secondaryButtonText: "WhatsApp Us",

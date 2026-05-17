@@ -66,10 +66,10 @@ export default async function AreaPage({ params }: { params: Promise<{ slug: str
                 sizes="100vw"
               />
             </div>
-            <div className="absolute inset-0 z-0 bg-gradient-to-r from-black/80 via-black/60 to-black/20" />
+            <div className="absolute inset-0 z-0 bg-linear-to-r from-black/80 via-black/60 to-black/20" />
           </>
         ) : (
-          <div className="absolute inset-0 z-0 bg-gradient-to-br from-primary/90 to-primary/60" />
+          <div className="absolute inset-0 z-0 bg-linear-to-br from-primary/90 to-primary/60" />
         )}
 
         <div className="container-premium relative z-10">
@@ -93,7 +93,7 @@ export default async function AreaPage({ params }: { params: Promise<{ slug: str
                   Book Now in {area.title} <ChevronRight className="ml-2 w-5 h-5" />
                 </Button>
               </Link>
-              <Link href="tel:+971XXXXXXXX">
+              <Link href="tel:+971555503288">
                 <Button size="lg" variant="outline" className="text-lg px-8 border-white/50 text-white hover:bg-white/10 backdrop-blur-sm">
                   <Phone className="mr-2 w-5 h-5" /> Call Us
                 </Button>
@@ -136,10 +136,10 @@ export default async function AreaPage({ params }: { params: Promise<{ slug: str
               <div className="bg-muted/50 rounded-2xl p-6 border border-border">
                 <h3 className="text-lg font-bold mb-4">Quick Info</h3>
                 <ul className="space-y-3 text-sm text-muted-foreground">
-                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" /> Mobile car wash — we come to you</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" /> Available 7 days a week</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" /> Eco-friendly cleaning products</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" /> Trained & insured detailers</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-primary shrink-0" /> Mobile car wash — we come to you</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-primary shrink-0" /> Available 7 days a week</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-primary shrink-0" /> Eco-friendly cleaning products</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-primary shrink-0" /> Trained & insured detailers</li>
                 </ul>
               </div>
 
@@ -174,14 +174,36 @@ export default async function AreaPage({ params }: { params: Promise<{ slug: str
                     <span className="text-2xl font-black text-primary">AED {service.price}</span>
                     <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">{service.duration}</span>
                   </div>
-                  <Link href={`/services/${service.slug}`} className="mt-4 block">
-                    <Button variant="outline" size="sm" className="w-full">View Details</Button>
-                  </Link>
+                  <div className="mt-4 flex gap-2">
+                    <Link href="/book" className="flex-1">
+                      <Button size="sm" className="w-full font-bold shadow-soft">Book Now →</Button>
+                    </Link>
+                    <Link href={`/services/${service.slug}`}>
+                      <Button variant="outline" size="sm" className="px-3">Details</Button>
+                    </Link>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
         </section>
+      )}
+
+      {/* ── MID-PAGE CTA STRIP ── */}
+      {services.length > 0 && (
+        <div className="bg-secondary py-7">
+          <div className="container-premium flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+            <div>
+              <p className="font-black text-white text-xl">Ready for a spotless car in {area.title}?</p>
+              <p className="text-white/80 text-sm mt-0.5">We arrive within 45 min · Book in under a minute</p>
+            </div>
+            <Link href="/book" className="shrink-0">
+              <Button size="lg" className="bg-white text-secondary hover:bg-white/90 font-black px-8 shadow-xl">
+                Book Now in {area.title} →
+              </Button>
+            </Link>
+          </div>
+        </div>
       )}
 
       {/* ── MAP SECTION ── */}

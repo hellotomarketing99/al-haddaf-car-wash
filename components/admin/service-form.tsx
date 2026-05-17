@@ -82,8 +82,24 @@ export function ServiceForm({ initialData }: ServiceFormProps) {
               <Input type="number" step="0.01" name="price" defaultValue={initialData?.price} required />
             </div>
             <div>
+              <label className="block text-sm font-medium mb-1">Original Price (AED)</label>
+              <Input type="number" step="0.01" name="compareAtPrice" defaultValue={initialData?.compareAtPrice ?? ''} placeholder="Leave blank if no sale" />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
               <label className="block text-sm font-medium mb-1">Duration *</label>
               <Input name="duration" defaultValue={initialData?.duration} placeholder="e.g. 45 mins" required />
+            </div>
+            <div className="flex items-center gap-3 pt-6">
+              <input
+                type="checkbox"
+                name="isBundle"
+                id="isBundle"
+                defaultChecked={initialData?.isBundle ?? false}
+                className="h-4 w-4 rounded border-gray-300 text-primary"
+              />
+              <label htmlFor="isBundle" className="text-sm font-medium">Featured Bundle</label>
             </div>
           </div>
           <div>

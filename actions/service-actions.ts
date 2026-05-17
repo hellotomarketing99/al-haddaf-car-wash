@@ -98,6 +98,9 @@ export async function saveService(formData: FormData) {
     const shortDescription = formData.get('shortDescription') as string;
     const fullDescription = formData.get('fullDescription') as string;
     const price = parseFloat(formData.get('price') as string);
+    const compareAtPriceRaw = formData.get('compareAtPrice') as string;
+    const compareAtPrice = compareAtPriceRaw ? parseFloat(compareAtPriceRaw) : null;
+    const isBundle = formData.get('isBundle') === 'on';
     const duration = formData.get('duration') as string;
     const metaTitle = formData.get('metaTitle') as string;
     const metaDescription = formData.get('metaDescription') as string;
@@ -134,6 +137,8 @@ export async function saveService(formData: FormData) {
           shortDescription,
           fullDescription,
           price,
+          compareAtPrice,
+          isBundle,
           duration,
           image: imageUrl,
           features,
@@ -159,6 +164,8 @@ export async function saveService(formData: FormData) {
           shortDescription,
           fullDescription,
           price,
+          compareAtPrice,
+          isBundle,
           duration,
           image: imageUrl,
           features,
