@@ -1,4 +1,16 @@
+'use client'
+
+import { useState, useRef, useCallback } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
+import { MoveHorizontal } from 'lucide-react'
+
+// ─────────────────────────────────────────────────────────────────────────────
+// HOW TO ADD YOUR OWN PHOTOS
+// 1. Drop images into /public/gallery/ in your project
+// 2. Name them: before-1.jpg, after-1.jpg, before-2.jpg, after-2.jpg, etc.
+// 3. Update the title / service label in the transformations array below
+// ─────────────────────────────────────────────────────────────────────────────
 
 const transformations = [
   {
@@ -24,6 +36,143 @@ const transformations = [
   },
 ]
 
+// ─── Fallback shown when the image file hasn't been added yet ────────────────
+function Placeholder({ label, accent }: { label: string; accent?: boolean }) {
+  return (
+    <div
+      className={`absolute inset-0 flex flex-col items-center justify-center gap-3 ${
+        accent ? 'bg-primary/8' : 'bg-gray-100'
+      }`}
+    >
+      <div
+        className={`h-16 w-16 rounded-full flex items-center justify-center text-3xl ${
+          accent ? 'bg-primary/15' : 'bg-gray-200'
+        }`}
+      >
+        {accent ? '✨' : '📷'}
+      </div>
+      <span className="text-xs font-semibold text-gray-400">{label}</span>
+    </div>
+  )
+}
+
+// ─── Individual drag-to-reveal slider card ───────────────────────────────────
+function SliderCard({ item }: { item: (typeof transformations)[0] }) {
+  const [position, setPosition] = useState(50)
+  const [isDragging, setIsDragging] = useState(false)
+  const [beforeError, setBeforeError] = useState(false)
+  const [afterError, setAfterError] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  const getPercent = useCallback((clientX: number) => {
+    if (!containerRef.current) return 50
+    const rect = containerRef.current.getBoundingClientRect()
+    return Math.min(97, Math.max(3, ((clientX - rect.left) / rect.width) * 100))
+  }, [])
+
+  const onMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (!isDragging) return
+      setPosition(getPercent(e.clientX))
+    },
+    [isDragging, getPercent]
+  )
+
+  const onTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      e.preventDefault()
+      setPosition(getPercent(e.touches[0].clientX))
+    },
+    [getPercent]
+  )
+
+  return (
+    <div className="group rounded-2xl border border-border overflow-hidden shadow-soft hover:shadow-premium transition-all">
+      {/* ── Slider area ── */}
+      <div
+        ref={containerRef}
+        className="relative h-72 select-none cursor-ew-resize overflow-hidden touch-none"
+        onMouseMove={onMouseMove}
+        onMouseDown={() => setIsDragging(true)}
+        onMouseUp={() => setIsDragging(false)}
+        onMouseLeave={() => setIsDragging(false)}
+        onTouchMove={onTouchMove}
+        onTouchStart={() => {}}
+      >
+        {/* After image — full-width base layer */}
+        {afterError ? (
+          <Placeholder label="After Photo" accent />
+        ) : (
+          <Image
+            src={item.after}
+            alt={`After — ${item.title}`}
+            fill
+            className="object-cover"
+            onError={() => setAfterError(true)}
+          />
+        )}
+
+        {/* Before image — clipped from the right via clipPath */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ clipPath: `inset(0 ${100 - position}% 0 0)` }}
+        >
+          {beforeError ? (
+            <Placeholder label="Before Photo" />
+          ) : (
+            <Image
+              src={item.before}
+              alt={`Before — ${item.title}`}
+              fill
+              className="object-cover"
+              onError={() => setBeforeError(true)}
+            />
+          )}
+        </div>
+
+        {/* Divider line + drag handle */}
+        <div
+          className="absolute inset-y-0 z-30 flex items-center pointer-events-none"
+          style={{ left: `${position}%` }}
+        >
+          <div className="absolute inset-y-0 w-0.5 bg-white shadow-lg -translate-x-px" />
+          <div className="relative -translate-x-1/2 h-11 w-11 rounded-full bg-white shadow-xl border-2 border-primary flex items-center justify-center pointer-events-auto cursor-ew-resize">
+            <MoveHorizontal size={18} className="text-primary" />
+          </div>
+        </div>
+
+        {/* Before / After labels */}
+        <span className="absolute top-3 left-3 z-20 rounded-full bg-black/60 px-3 py-1 text-xs font-bold text-white backdrop-blur-sm pointer-events-none">
+          Before
+        </span>
+        <span className="absolute top-3 right-3 z-20 rounded-full bg-primary/90 px-3 py-1 text-xs font-bold text-white backdrop-blur-sm pointer-events-none">
+          After
+        </span>
+
+        {/* Drag hint — fades out after first drag */}
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 rounded-full bg-black/40 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm pointer-events-none opacity-80 group-hover:opacity-100 transition-opacity">
+          ← Drag to compare →
+        </div>
+      </div>
+
+      {/* Card footer */}
+      <div className="flex items-center justify-between px-5 py-4 bg-white border-t border-border">
+        <div>
+          <p className="font-black text-gray-900 text-sm">{item.title}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">{item.service}</p>
+        </div>
+        <Link
+          href="/book"
+          className="rounded-full bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary hover:bg-primary hover:text-white transition-colors"
+        >
+          Book This →
+        </Link>
+      </div>
+    </div>
+  )
+}
+
+// ─── Section export ──────────────────────────────────────────────────────────
 export function BeforeAfterGallery() {
   return (
     <section className="py-24 bg-white">
@@ -37,72 +186,29 @@ export function BeforeAfterGallery() {
             See the Transformation
           </h2>
           <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-            Every vehicle tells a story. Here&apos;s what a professional detail can do for yours.
+            Drag the slider on each card to compare before &amp; after. Every vehicle, every time.
           </p>
         </div>
 
-        {/* Cards Grid */}
+        {/* Slider grid */}
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {transformations.map((item) => (
-            <div
-              key={item.id}
-              className="group rounded-2xl border border-border overflow-hidden shadow-soft hover:shadow-premium transition-all"
-            >
-              {/* Before */}
-              <div className="relative">
-                <div className="absolute top-3 left-3 z-10 rounded-full bg-black/60 px-3 py-1 text-xs font-bold text-white backdrop-blur-sm">
-                  Before
-                </div>
-                <div className="h-48 bg-gray-200 flex items-center justify-center">
-                  {/* Placeholder — replace src with real photo */}
-                  <div className="flex flex-col items-center gap-2 text-gray-400">
-                    <div className="h-16 w-16 rounded-full bg-gray-300 flex items-center justify-center text-2xl">
-                      📷
-                    </div>
-                    <span className="text-xs font-semibold">Before Photo</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Divider */}
-              <div className="relative flex items-center justify-center bg-primary py-2">
-                <div className="flex items-center gap-3 text-white text-xs font-black tracking-wider">
-                  <span className="h-px w-12 bg-white/40" />
-                  TRANSFORMATION
-                  <span className="h-px w-12 bg-white/40" />
-                </div>
-              </div>
-
-              {/* After */}
-              <div className="relative">
-                <div className="absolute top-3 left-3 z-10 rounded-full bg-primary/90 px-3 py-1 text-xs font-bold text-white backdrop-blur-sm">
-                  After
-                </div>
-                <div className="h-48 bg-gray-100 flex items-center justify-center">
-                  {/* Placeholder — replace src with real photo */}
-                  <div className="flex flex-col items-center gap-2 text-gray-400">
-                    <div className="h-16 w-16 rounded-full bg-primary/20 flex items-center justify-center text-2xl">
-                      ✨
-                    </div>
-                    <span className="text-xs font-semibold">After Photo</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Card Footer */}
-              <div className="p-4 bg-white border-t border-border">
-                <p className="font-black text-gray-900 text-sm">{item.title}</p>
-                <p className="text-xs text-muted-foreground mt-0.5">{item.service}</p>
-              </div>
-            </div>
+            <SliderCard key={item.id} item={item} />
           ))}
         </div>
 
+        {/* Photo instructions */}
+        <p className="mt-8 text-center text-xs text-muted-foreground/50">
+          To add your own photos: drop images into{' '}
+          <code className="font-mono bg-gray-100 px-1 rounded">/public/gallery/</code> named{' '}
+          <code className="font-mono bg-gray-100 px-1 rounded">before-1.jpg</code>,{' '}
+          <code className="font-mono bg-gray-100 px-1 rounded">after-1.jpg</code>, … up to{' '}
+          <code className="font-mono bg-gray-100 px-1 rounded">before-3.jpg</code> /{' '}
+          <code className="font-mono bg-gray-100 px-1 rounded">after-3.jpg</code>
+        </p>
+
         {/* CTA */}
-        <div className="mt-14 text-center">
-          <p className="text-muted-foreground mb-4">
-            Ready to see this transformation on your vehicle?
-          </p>
+        <div className="mt-10 text-center">
           <Link
             href="/book"
             className="inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-sm font-black text-white hover:bg-primary/90 shadow-premium transition-all"
