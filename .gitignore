@@ -48,3 +48,9 @@ next-env.d.ts
 
 # Local uploaded files (use cloud storage in production)
 public/uploads/
+
+.vercel
+
+# Cloudflare build outputs
+.open-next/
+.wrangler/
