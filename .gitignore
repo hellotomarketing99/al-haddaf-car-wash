@@ -42,3 +42,9 @@ next-env.d.ts
 /*.html
 
 /lib/generated/prisma
+
+# Claude Code configuration
+.claude/
+
+# Local uploaded files (use cloud storage in production)
+public/uploads/
